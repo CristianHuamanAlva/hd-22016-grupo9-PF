@@ -3,20 +3,23 @@
 //logica.... nombre del archivo ruta no es necesario . html y 
 // en getID colocar el name del id_ que se encuentra en el index 
 
-//navbar
-const basePath = window.location.pathname.includes('/html/') ? '../html/' : 'html/';
+// Detectar si estoy dentro de la carpeta /html/
+const basePath = window.location.pathname.includes('/html/') ? './' : 'html/';
 
+// navbar
 fetch(basePath + 'navbar.html')
   .then(response => response.text())
   .then(data => {
     document.getElementById('navbar').innerHTML = data;
   });
-//footer
+
+// footer
 fetch(basePath + 'footer.html')
   .then(response => response.text())
   .then(data => {
     document.getElementById('footer').innerHTML = data;
   });
+
 
 //continuara...
 //carrousel

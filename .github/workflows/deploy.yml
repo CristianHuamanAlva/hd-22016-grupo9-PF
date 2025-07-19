@@ -1,0 +1,71 @@
+name: CI/CD Frontend
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: 2. Mostrar sistema operativo
+        run: uname -a
+
+      - name: 3. Mostrar fecha y hora actual
+        run: date
+
+      - name: 4. Mostrar estructura de archivos
+        run: tree || ls -R
+
+      - name: 5. Buscar archivos HTML
+        run: find . -name "*.html"
+
+      - name: 6. Buscar archivos CSS
+        run: find . -name "*.css"
+
+      - name: 7. Buscar archivos JS
+        run: find . -name "*.js"
+
+      - name: 8. Contar líneas de código
+        run: find . -name "*.html" -o -name "*.css" -o -name "*.js" | xargs wc -l
+
+      - name: 9. Confirmar que build fue exitoso
+        run: echo "✅ Build completado correctamente."
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 1. Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: 2. Verificar archivos a desplegar
+        run: ls -R
+        
+      - name: 3. Comprobar existencia de index.html en raíz
+        run: test -f index.html && echo "index.html encontrado en raíz" || exit 1
+
+      - name: 4. Comprobar existencia de carpeta css/
+        run: test -d css && echo "Carpeta css encontrada" || echo "⚠️ No se encontró carpeta css"
+
+      - name: 5. Comprobar existencia de carpeta js/
+        run: test -d js && echo "Carpeta js encontrada" || echo "⚠️ No se encontró carpeta js"
+
+      - name: 6. Mostrar archivos que serán publicados
+        run: find . -type f
+
+      - name: 7. Crear archivo de log de despliegue
+        run: echo "Despliegue ejecutado el $(date)" > deploy.log
+
+      - name: 8. Verificar que todo está listo para el deploy
+        run: echo "Todo listo. Iniciando despliegue en GitHub Pages..."
+
+      - name: 9. Desplegar con GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+
